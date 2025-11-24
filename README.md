@@ -31,8 +31,8 @@ A modern, lightweight web-based NVR (Network Video Recorder) interface for brows
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/localnvr.git
-cd localnvr
+git clone https://github.com/Feriman22/LocalNVR.git
+cd LocalNVR
 ```
 
 2. Edit `docker-compose.yml` and set your recordings path:
@@ -47,6 +47,18 @@ docker-compose up -d
 ```
 
 4. Open your browser: `http://localhost:3999`
+
+### Using Pre-built Docker Image
+
+```bash
+docker run -d \
+  --name localnvr \
+  -p 3999:3000 \
+  -v /your/recordings/path:/videos:ro \
+  -e TZ=Europe/Budapest \
+  --restart unless-stopped \
+  feriman25/localnvr:latest
+```
 
 ### Using Docker Build
 
@@ -154,15 +166,11 @@ Only the currently playing video is kept in memory. Previous videos are automati
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/localnvr.git
-cd localnvr
+git clone https://github.com/Feriman22/LocalNVR.git
+cd LocalNVR
 
 # Install dependencies
 npm install express
-
-# Create public directory and add index.html
-mkdir public
-# Copy index.html to public/
 
 # Run the server
 node server.js
@@ -175,11 +183,10 @@ node server.js
 ```
 localnvr/
 ├── server.js           # Backend API server
-├── public/
-│   └── index.html     # Frontend application
-├── Dockerfile         # Docker build instructions
-├── docker-compose.yml # Docker Compose configuration
-└── README.md          # This file
+├── index.html          # Frontend application
+├── Dockerfile          # Docker build instructions
+├── docker-compose.yml  # Docker Compose configuration
+└── README.md           # This file
 ```
 
 ## 📊 Performance
@@ -255,6 +262,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+**Repository:** https://github.com/Feriman22/LocalNVR
+
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -267,8 +276,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📮 Support
 
-- **Issues:** [GitHub Issues](https://github.com/yourusername/localnvr/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/yourusername/localnvr/discussions)
+- **Docker Hub:** [feriman25/localnvr](https://hub.docker.com/r/feriman25/localnvr)
+- **GitHub:** [Feriman22/LocalNVR](https://github.com/Feriman22/LocalNVR)
+- **Issues:** [GitHub Issues](https://github.com/Feriman22/LocalNVR/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/Feriman22/LocalNVR/discussions)
 
 ## 🗺️ Roadmap
 
