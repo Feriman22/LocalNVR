@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalNVR</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%231a1a1a' width='100' height='100'/%3E%3Cpath fill='%234a9eff' d='M20 25h60v50H20z'/%3E%3Ccircle fill='%23ff4444' cx='50' cy='50' r='8'/%3E%3Cpath fill='none' stroke='%234a9eff' stroke-width='3' d='M30 35l40 30M70 35L30 65'/%3E%3C/svg%3E">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Top control bar */
+    #controls {
+      padding: 12px 20px;
+      background: linear-gradient(to bottom, #1a1a1a, #151515);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      border-bottom: 1px solid #2a2a2a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      flex-wrap: wrap;
+    }
+    
+    select, input[type="date"], input[type="time"] {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #2a2a2a;
+      color: #e0e0e0;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    select:hover, input:hover {
+      border-color: #4a9eff;
+      background: #2f2f2f;
+    }
+    
+    select:focus, input:focus {
+      outline: none;
+      border-color: #4a9eff;
+      box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+    }
+    
+    button {
+      padding: 8px 16px;
+      background: linear-gradient(to bottom, #4a9eff, #2563eb);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    button:hover {
+      background: linear-gradient(to bottom, #5aa8ff, #3573fb);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    #currentTime {
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      color: #4a9eff;
+      margin-left: auto;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
+    }
+    
+    /* Video container */
+    #videoContainer {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    video {
+      max-width: 100%;
+      max-height: 100%;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    }
+    
+    #videoInfo {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    #videoInfo div {
+      margin: 3px 0;
+    }
+    
+    /* Playback controls */
+    #playbackControls {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      padding: 12px 20px;
+      border-radius: 30px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .control-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+    }
+    
+    .control-btn:hover {
+      background: rgba(74, 158, 255, 0.3);
+      transform: scale(1.1);
+    }
+    
+    .speed-indicator {
+      font-size: 12px;
+      color: #4a9eff;
+      min-width: 40px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    /* Timeline */
+    #timeline {
+      height: 140px;
+      background: #1a1a1a;
+      position: relative;
+      border-top: 2px solid #2a2a2a;
+    }
+    
+    #timelineControls {
+      padding: 8px 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #151515;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    
+    #zoomSlider {
+      width: 120px;
+      cursor: pointer;
+    }
+    
+    #timelineWrapper {
+      position: relative;
+      overflow-x: auto;
+      height: 90px;
+    }
+    
+    #timelineBar {
+      height: 70px;
+      background: linear-gradient(to bottom, #2a2a2a, #1f1f1f);
+      margin: 10px 20px 0 20px;
+      position: relative;
+      border-radius: 8px;
+      overflow: visible;
+      cursor: pointer;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+      min-width: 100%;
+    }
+    
+    #timelineBar:hover {
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), 0 0 0 2px rgba(74, 158, 255, 0.3);
+    }
+    
+    .segment {
+      position: absolute;
+      height: 100%;
+      background: linear-gradient(to bottom, #4a9eff, #2563eb);
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .segment:hover {
+      opacity: 1;
+      box-shadow: 0 0 10px rgba(74, 158, 255, 0.8);
+    }
+    
+    #playhead {
+      position: absolute;
+      width: 3px;
+      height: 100%;
+      background: #ff4444;
+      top: 0;
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+      z-index: 10;
+    }
+    
+    #playheadTime {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff4444;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      white-space: nowrap;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    
+    #timeLabels {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 20px 0 20px;
+      font-size: 11px;
+      color: #666;
+      font-family: 'Courier New', monospace;
+    }
+    
+    #hoverTooltip {
+      position: absolute;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      pointer-events: none;
+      display: none;
+      z-index: 20;
+      border: 1px solid rgba(255,255,255,0.2);
+      font-family: 'Courier New', monospace;
+    }
+    
+    /* Loading animation */
+    .loading {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #4a9eff;
+      font-size: 18px;
+    }
+    
+    .loading.active {
+      display: block;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(74, 158, 255, 0.3);
+      border-top: 4px solid #4a9eff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(5px);
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: #2a2a2a;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+      border: 1px solid #444;
+      max-width: 400px;
+    }
+    
+    .modal-content h3 {
+      margin-bottom: 15px;
+      color: #4a9eff;
+    }
+    
+    .modal-content button {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top control bar -->
+  <div id="controls">
+    <select id="cameraSelect">
+      <option value="">Select camera...</option>
+    </select>
+    
+    <input type="date" id="datePicker" />
+    
+    <input type="time" id="timePicker" step="1" />
+    
+    <button onclick="jumpToTime()">⏩ Jump to time</button>
+    <button onclick="downloadVideo()" id="downloadBtn" disabled>⬇️ Download</button>
+    
+    <span id="currentTime">--:--:--</span>
+  </div>
+  
+  <!-- Video player -->
+  <div id="videoContainer">
+    <video id="video" preload="metadata"></video>
+    
+    <div id="videoInfo" style="display: none;">
+      <div><strong>📹 File:</strong> <span id="infoFilename">-</span></div>
+      <div><strong>⏱️ Time:</strong> <span id="infoTimestamp">-</span></div>
+      <div><strong>📊 Size:</strong> <span id="infoSize">-</span></div>
+    </div>
+    
+    <!-- Playback controls -->
+    <div id="playbackControls">
+      <button class="control-btn" onclick="changeSpeed(-1)" title="Decrease speed">◀◀</button>
+      <button class="control-btn" onclick="togglePlayPause()" id="playPauseBtn" title="Play/Pause">▶</button>
+      <button class="control-btn" onclick="changeSpeed(1)" title="Increase speed">▶▶</button>
+      <span class="speed-indicator" id="speedIndicator">1.0x</span>
+    </div>
+    
+    <!-- Loading animation -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div>Loading...</div>
+    </div>
+  </div>
+  
+  <!-- Timeline -->
+  <div id="timeline">
+    <div id="timelineControls">
+      <label style="font-size: 12px; color: #888;">Zoom:</label>
+      <input type="range" id="zoomSlider" min="1" max="10" value="1" step="0.5">
+      <span id="zoomLevel" style="font-size: 12px; color: #888;">1x</span>
+    </div>
+    <div id="timelineWrapper">
+      <div id="timelineBar" onmousemove="showTooltip(event)" onmouseleave="hideTooltip()" onclick="seekTimeline(event)">
+        <div id="segments"></div>
+        <div id="playhead">
+          <div id="playheadTime">00:00:00</div>
+        </div>
+        <div id="hoverTooltip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Notice</h3>
+      <p id="modalMessage"></p>
+      <button onclick="closeModal()">OK</button>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const video = document.getElementById('video');
+    const cameraSelect = document.getElementById('cameraSelect');
+    const datePicker = document.getElementById('datePicker');
+    const timePicker = document.getElementById('timePicker');
+    const playhead = document.getElementById('playhead');
+    const playheadTime = document.getElementById('playheadTime');
+    const segments = document.getElementById('segments');
+    const currentTime = document.getElementById('currentTime');
+    const videoInfo = document.getElementById('videoInfo');
+    const loading = document.getElementById('loading');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const speedIndicator = document.getElementById('speedIndicator');
+    const hoverTooltip = document.getElementById('hoverTooltip');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const zoomSlider = document.getElementById('zoomSlider');
+    const zoomLevel = document.getElementById('zoomLevel');
+    const timelineBar = document.getElementById('timelineBar');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    
+    // State
+    let videos = [];
+    let currentVideo = null;
+    let currentSpeed = 1.0;
+    const speeds = [0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0];
+    let refreshInterval = null;
+    let nextVideoPreload = null;
+    let zoomFactor = 1;
+    
+    // Initialize
+    (async function init() {
+      const today = new Date();
+      datePicker.valueAsDate = today;
+      timePicker.value = today.toTimeString().slice(0, 8);
+      
+      await loadCameras();
+      
+      // Auto-load on start
+      if (cameraSelect.value) {
+        await loadVideos();
+      }
+      
+      // Video events
+      video.addEventListener('timeupdate', updatePlayhead);
+      video.addEventListener('ended', playNextVideo);
+      video.addEventListener('play', () => playPauseBtn.textContent = '⏸');
+      video.addEventListener('pause', () => playPauseBtn.textContent = '▶');
+      video.addEventListener('loadstart', () => loading.classList.add('active'));
+      video.addEventListener('canplay', () => loading.classList.remove('active'));
+      
+      // Keyboard shortcuts
+      document.addEventListener('keydown', handleKeyPress);
+      
+      // Zoom slider
+      zoomSlider.addEventListener('input', (e) => {
+        zoomFactor = parseFloat(e.target.value);
+        zoomLevel.textContent = zoomFactor + 'x';
+        applyZoom();
+      });
+      
+      // Camera/date change listeners
+      cameraSelect.addEventListener('change', loadVideos);
+      datePicker.addEventListener('change', loadVideos);
+    })();
+    
+    // Load cameras
+    async function loadCameras() {
+      try {
+        const res = await fetch('/api/cameras');
+        const cameras = await res.json();
+        
+        cameraSelect.innerHTML = '<option value="">Select camera...</option>';
+        cameras.forEach(cam => {
+          const option = document.createElement('option');
+          option.value = cam.id;
+          option.textContent = cam.name;
+          cameraSelect.appendChild(option);
+        });
+        
+        if (cameras.length > 0) {
+          cameraSelect.value = cameras[0].id;
+        }
+      } catch (error) {
+        console.error('Error loading cameras:', error);
+        showModal('Error', 'Failed to load cameras');
+      }
+    }
+    
+    // Load videos
+    async function loadVideos() {
+      const camera = cameraSelect.value;
+      const date = datePicker.value;
+      
+      if (!camera || !date) {
+        return;
+      }
+      
+      try {
+        loading.classList.add('active');
+        
+        const res = await fetch(`/api/videos/${camera}/${date}`);
+        const newVideos = await res.json();
+        
+        loading.classList.remove('active');
+        
+        if (newVideos.length === 0) {
+          showModal('No Videos', 'No videos available for this date. Please select another date or camera.');
+          videoInfo.style.display = 'none';
+          segments.innerHTML = '';
+          return;
+        }
+        
+        // Only update if videos changed
+        if (JSON.stringify(videos) !== JSON.stringify(newVideos)) {
+          videos = newVideos;
+          renderTimeline();
+          
+          if (!currentVideo && videos.length > 0) {
+            playVideo(videos[0]);
+          }
+        }
+        
+        // Start auto-refresh
+        startAutoRefresh();
+      } catch (error) {
+        console.error('Error loading videos:', error);
+        loading.classList.remove('active');
+        showModal('Error', 'Failed to load videos');
+      }
+    }
+    
+    // Auto-refresh every 30 seconds
+    function startAutoRefresh() {
+      if (refreshInterval) clearInterval(refreshInterval);
+      refreshInterval = setInterval(loadVideos, 30000);
+    }
+    
+    // Render timeline
+    function renderTimeline() {
+      segments.innerHTML = '';
+      
+      videos.forEach((v, idx) => {
+        const date = new Date(v.timestamp);
+        const minuteOfDay = date.getHours() * 60 + date.getMinutes() + date.getSeconds() / 60;
+        const position = (minuteOfDay / 1440) * 100;
+        
+        const widthMinutes = v.duration / 60;
+        const width = (widthMinutes / 1440) * 100;
+        
+        const seg = document.createElement('div');
+        seg.className = 'segment';
+        seg.style.left = position + '%';
+        seg.style.width = Math.max(width, 0.3) + '%';
+        seg.title = `${v.time} - ${v.filename}`;
+        seg.onclick = (e) => {
+          e.stopPropagation();
+          playVideo(v);
+        };
+        segments.appendChild(seg);
+      });
+      
+      applyZoom();
+    }
+    
+    // Apply zoom to timeline
+    function applyZoom() {
+      const width = 100 * zoomFactor;
+      timelineBar.style.width = width + '%';
+      
+      // Scroll to playhead position
+      if (currentVideo) {
+        const date = new Date(currentVideo.timestamp);
+        const minuteOfDay = date.getHours() * 60 + date.getMinutes();
+        const percent = (minuteOfDay / 1440);
+        const scrollPos = (timelineBar.parentElement.scrollWidth * percent) - (timelineBar.parentElement.clientWidth / 2);
+        timelineBar.parentElement.scrollLeft = Math.max(0, scrollPos);
+      }
+    }
+    
+    // Play video
+    function playVideo(videoData) {
+      // Clean up old video to free memory
+      if (video.src) {
+        URL.revokeObjectURL(video.src);
+      }
+      
+      currentVideo = videoData;
+      video.src = videoData.url;
+      video.playbackRate = currentSpeed;
+      video.play();
+      
+      downloadBtn.disabled = false;
+      
+      videoInfo.style.display = 'block';
+      document.getElementById('infoFilename').textContent = videoData.filename;
+      document.getElementById('infoTimestamp').textContent = new Date(videoData.timestamp).toLocaleString('en-US');
+      document.getElementById('infoSize').textContent = formatBytes(videoData.size);
+      
+      updatePlayhead();
+      preloadNextVideo();
+    }
+    
+    // Preload next video
+    function preloadNextVideo() {
+      const idx = videos.indexOf(currentVideo);
+      if (idx < videos.length - 1) {
+        const nextVideo = videos[idx + 1];
+        if (nextVideoPreload) {
+          nextVideoPreload.src = '';
+        }
+        nextVideoPreload = document.createElement('video');
+        nextVideoPreload.src = nextVideo.url;
+        nextVideoPreload.preload = 'auto';
+      }
+    }
+    
+    // Play next video
+    function playNextVideo() {
+      if (!currentVideo) return;
+      
+      const idx = videos.indexOf(currentVideo);
+      if (idx < videos.length - 1) {
+        playVideo(videos[idx + 1]);
+      }
+    }
+    
+    // Seek timeline
+    function seekTimeline(event) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const percent = x / rect.width;
+      const minuteOfDay = percent * 1440 / zoomFactor;
+      
+      const targetTime = new Date(datePicker.value);
+      targetTime.setHours(Math.floor(minuteOfDay / 60));
+      targetTime.setMinutes(minuteOfDay % 60);
+      targetTime.setSeconds((minuteOfDay % 1) * 60);
+      
+      const closest = videos.reduce((prev, curr) => {
+        return Math.abs(curr.timestamp - targetTime.getTime()) < 
+               Math.abs(prev.timestamp - targetTime.getTime()) ? curr : prev;
+      });
+      
+      if (closest) playVideo(closest);
+    }
+    
+    // Update playhead
+    function updatePlayhead() {
+      if (!currentVideo) return;
+      
+      const date = new Date(currentVideo.timestamp);
+      const minuteOfDay = date.getHours() * 60 + date.getMinutes() + date.getSeconds() / 60;
+      const percent = (minuteOfDay / 1440) * 100 * zoomFactor;
+      
+      playhead.style.left = percent + '%';
+      playheadTime.textContent = date.toTimeString().slice(0, 8);
+      currentTime.textContent = date.toLocaleTimeString('en-US');
+    }
+    
+    // Tooltip
+    function showTooltip(event) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const percent = x / rect.width;
+      const minuteOfDay = percent * 1440 / zoomFactor;
+      
+      const hours = Math.floor(minuteOfDay / 60);
+      const minutes = Math.floor(minuteOfDay % 60);
+      const seconds = Math.floor((minuteOfDay % 1) * 60);
+      
+      const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      
+      hoverTooltip.textContent = timeStr;
+      hoverTooltip.style.display = 'block';
+      hoverTooltip.style.left = (event.clientX - rect.left) + 'px';
+      hoverTooltip.style.top = '10px';
+    }
+    
+    function hideTooltip() {
+      hoverTooltip.style.display = 'none';
+    }
+    
+    // Play/Pause
+    function togglePlayPause() {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    }
+    
+    // Change speed
+    function changeSpeed(direction) {
+      const currentIdx = speeds.indexOf(currentSpeed);
+      let newIdx = currentIdx + direction;
+      
+      if (newIdx < 0) newIdx = 0;
+      if (newIdx >= speeds.length) newIdx = speeds.length - 1;
+      
+      currentSpeed = speeds[newIdx];
+      video.playbackRate = currentSpeed;
+      speedIndicator.textContent = currentSpeed + 'x';
+    }
+    
+    // Jump to time
+    function jumpToTime() {
+      const time = timePicker.value;
+      if (!time || videos.length === 0) return;
+      
+      const [hours, minutes, seconds] = time.split(':').map(Number);
+      const targetTime = new Date(datePicker.value);
+      targetTime.setHours(hours, minutes, seconds);
+      
+      const closest = videos.reduce((prev, curr) => {
+        return Math.abs(curr.timestamp - targetTime.getTime()) < 
+               Math.abs(prev.timestamp - targetTime.getTime()) ? curr : prev;
+      });
+      
+      if (closest) playVideo(closest);
+    }
+    
+    // Download video
+    function downloadVideo() {
+      if (!currentVideo) return;
+      
+      const a = document.createElement('a');
+      a.href = currentVideo.url;
+      a.download = currentVideo.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    
+    // Modal
+    function showModal(title, message) {
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+      modal.classList.add('active');
+    }
+    
+    function closeModal() {
+      modal.classList.remove('active');
+    }
+    
+    // Keyboard shortcuts
+    function handleKeyPress(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      
+      switch(e.key) {
+        case ' ':
+          e.preventDefault();
+          togglePlayPause();
+          break;
+        case 'ArrowLeft':
+          video.currentTime = Math.max(0, video.currentTime - 5);
+          break;
+        case 'ArrowRight':
+          video.currentTime = Math.min(video.duration, video.currentTime + 5);
+          break;
+        case 'ArrowUp':
+          changeSpeed(1);
+          break;
+        case 'ArrowDown':
+          changeSpeed(-1);
+          break;
+        case 'd':
+        case 'D':
+          downloadVideo();
+          break;
+      }
+    }
+    
+    // Helper functions
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+    
+    // Close modal on click outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+  </script>
+</body>
+</html>
