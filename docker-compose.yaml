@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   localnvr:
-    image: localnvr:latest
+    image: feriman25/localnvr:latest
     container_name: localnvr
     restart: unless-stopped
     ports:
