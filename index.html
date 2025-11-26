@@ -12,13 +12,12 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
       background: #0a0a0a;
       color: #e0e0e0;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
       overflow: hidden;
     }
     
-    /* Top control bar */
     #controls {
       padding: 12px 20px;
       background: linear-gradient(to bottom, #1a1a1a, #151515);
@@ -30,7 +29,7 @@
       flex-wrap: wrap;
     }
     
-    select, input[type="date"], input[type="time"] {
+    select, input {
       padding: 8px 12px;
       border-radius: 6px;
       border: 1px solid #333;
@@ -41,16 +40,8 @@
       transition: all 0.2s;
     }
     
-    select:hover, input:hover {
-      border-color: #4a9eff;
-      background: #2f2f2f;
-    }
-    
-    select:focus, input:focus {
-      outline: none;
-      border-color: #4a9eff;
-      box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
-    }
+    select:hover, input:hover { border-color: #4a9eff; background: #2f2f2f; }
+    select:focus, input:focus { outline: none; border-color: #4a9eff; box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2); }
     
     button {
       padding: 8px 16px;
@@ -65,40 +56,26 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
     
-    button:hover {
-      background: linear-gradient(to bottom, #5aa8ff, #3573fb);
-      transform: translateY(-1px);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-    }
+    button:hover { background: linear-gradient(to bottom, #5aa8ff, #3573fb); transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     
-    button:active {
-      transform: translateY(0);
-    }
-    
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    #currentTime {
-      font-family: 'Courier New', monospace;
-      font-size: 16px;
-      color: #4a9eff;
+    #videoInfo {
       margin-left: auto;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #4a9eff;
+      display: flex;
+      gap: 20px;
     }
     
-    /* Video container */
     #videoContainer {
       flex: 1;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       background: #000;
-      position: relative;
-      overflow: hidden;
     }
     
     video {
@@ -107,23 +84,8 @@
       box-shadow: 0 0 30px rgba(0,0,0,0.8);
     }
     
-    #videoInfo {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      background: rgba(0,0,0,0.7);
-      padding: 10px 15px;
-      border-radius: 6px;
-      font-size: 13px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+
     
-    #videoInfo div {
-      margin: 3px 0;
-    }
-    
-    /* Playback controls */
     #playbackControls {
       position: absolute;
       bottom: 20px;
@@ -147,18 +109,13 @@
       padding: 8px;
       border-radius: 50%;
       transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       box-shadow: none;
+      font-size: 16px;
     }
     
-    .control-btn:hover {
-      background: rgba(74, 158, 255, 0.3);
-      transform: scale(1.1);
-    }
+    .control-btn:hover { background: rgba(74, 158, 255, 0.3); transform: scale(1.1); }
     
-    .speed-indicator {
+    #speedIndicator {
       font-size: 12px;
       color: #4a9eff;
       min-width: 40px;
@@ -166,48 +123,36 @@
       font-weight: bold;
     }
     
-    /* Timeline */
     #timeline {
-      height: 140px;
+      height: 120px;
       background: #1a1a1a;
       position: relative;
       border-top: 2px solid #2a2a2a;
     }
     
-    #timelineControls {
-      padding: 8px 20px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      background: #151515;
-      border-bottom: 1px solid #2a2a2a;
-    }
-    
-    #zoomSlider {
-      width: 120px;
-      cursor: pointer;
-    }
-    
     #timelineWrapper {
-      position: relative;
       overflow-x: auto;
-      height: 90px;
+      overflow-y: hidden;
+      height: 100%;
+      cursor: grab;
+      scrollbar-width: thin;
+      scrollbar-color: #4a9eff #1a1a1a;
     }
+    
+    #timelineWrapper::-webkit-scrollbar { height: 8px; }
+    #timelineWrapper::-webkit-scrollbar-track { background: #1a1a1a; }
+    #timelineWrapper::-webkit-scrollbar-thumb { background: #4a9eff; border-radius: 4px; }
+    
+    #timelineWrapper.grabbing { cursor: grabbing; }
     
     #timelineBar {
-      height: 70px;
+      height: 80px;
       background: linear-gradient(to bottom, #2a2a2a, #1f1f1f);
-      margin: 10px 20px 0 20px;
+      margin: 20px 10px 10px;
       position: relative;
-      border-radius: 8px;
-      overflow: visible;
-      cursor: pointer;
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
       min-width: 100%;
-    }
-    
-    #timelineBar:hover {
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), 0 0 0 2px rgba(74, 158, 255, 0.3);
+      border-radius: 8px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
     }
     
     .segment {
@@ -217,22 +162,19 @@
       opacity: 0.7;
       transition: opacity 0.2s;
       border-right: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
     }
     
-    .segment:hover {
-      opacity: 1;
-      box-shadow: 0 0 10px rgba(74, 158, 255, 0.8);
-    }
+    .segment:hover { opacity: 1; box-shadow: 0 0 10px rgba(74, 158, 255, 0.8); }
     
     #playhead {
       position: absolute;
       width: 3px;
       height: 100%;
       background: #ff4444;
-      top: 0;
+      z-index: 10;
       pointer-events: none;
       box-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
-      z-index: 10;
     }
     
     #playheadTime {
@@ -250,30 +192,45 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
     
-    #timeLabels {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 20px 0 20px;
-      font-size: 11px;
-      color: #666;
-      font-family: 'Courier New', monospace;
-    }
-    
-    #hoverTooltip {
+    .time-tick {
       position: absolute;
-      background: rgba(0,0,0,0.9);
-      color: white;
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 12px;
-      pointer-events: none;
-      display: none;
-      z-index: 20;
-      border: 1px solid rgba(255,255,255,0.2);
-      font-family: 'Courier New', monospace;
+      bottom: 5px;
+      color: #FFF;
+      font-size: 14px;
+      /*  font-family: 'Courier New', monospace; */
+      transform: translateX(-50%);
+      user-select: none;
     }
     
-    /* Loading animation */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(5px);
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active { display: flex; }
+    
+    .modal-content {
+      background: #2a2a2a;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+      border: 1px solid #444;
+      max-width: 400px;
+    }
+    
+    .modal-content h3 { margin-bottom: 15px; color: #4a9eff; }
+    .modal-content button { margin-top: 20px; }
+    
     .loading {
       display: none;
       position: absolute;
@@ -284,9 +241,7 @@
       font-size: 18px;
     }
     
-    .loading.active {
-      display: block;
-    }
+    .loading.active { display: block; }
     
     .spinner {
       border: 4px solid rgba(74, 158, 255, 0.3);
@@ -302,464 +257,425 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(5px);
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .modal.active {
-      display: flex;
-    }
-    
-    .modal-content {
-      background: #2a2a2a;
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.8);
-      border: 1px solid #444;
-      max-width: 400px;
-    }
-    
-    .modal-content h3 {
-      margin-bottom: 15px;
-      color: #4a9eff;
-    }
-    
-    .modal-content button {
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
-  <!-- Top control bar -->
   <div id="controls">
     <select id="cameraSelect">
-      <option value="">Select camera...</option>
+      <option>Select camera...</option>
     </select>
-    
-    <input type="date" id="datePicker" />
-    
-    <input type="time" id="timePicker" step="1" />
-    
+    <input type="date" id="datePicker">
+    <input type="time" id="timePicker" step="1">
     <button onclick="jumpToTime()">⏩ Jump to time</button>
-    <button onclick="downloadVideo()" id="downloadBtn" disabled>⬇️ Download</button>
-    
-    <span id="currentTime">--:--:--</span>
+    <button id="downloadBtn" onclick="downloadVideo()" disabled>⬇️ Download</button>
+    <div id="videoInfo"></div>
   </div>
   
-  <!-- Video player -->
   <div id="videoContainer">
-    <video id="video" preload="metadata"></video>
+    <video id="currentVideo" preload="auto"></video>
+    <video id="nextVideo" preload="auto" style="display: none;"></video>
     
-    <div id="videoInfo" style="display: none;">
-      <div><strong>📹 File:</strong> <span id="infoFilename">-</span></div>
-      <div><strong>⏱️ Time:</strong> <span id="infoTimestamp">-</span></div>
-      <div><strong>📊 Size:</strong> <span id="infoSize">-</span></div>
-    </div>
-    
-    <!-- Playback controls -->
     <div id="playbackControls">
       <button class="control-btn" onclick="changeSpeed(-1)" title="Decrease speed">◀◀</button>
-      <button class="control-btn" onclick="togglePlayPause()" id="playPauseBtn" title="Play/Pause">▶</button>
+      <button class="control-btn" id="playPauseBtn" onclick="togglePlayPause()" title="Play/Pause">▶</button>
       <button class="control-btn" onclick="changeSpeed(1)" title="Increase speed">▶▶</button>
-      <span class="speed-indicator" id="speedIndicator">1.0x</span>
+      <span id="speedIndicator">1.0x</span>
     </div>
     
-    <!-- Loading animation -->
     <div class="loading" id="loading">
       <div class="spinner"></div>
       <div>Loading...</div>
     </div>
   </div>
   
-  <!-- Timeline -->
   <div id="timeline">
-    <div id="timelineControls">
-      <label style="font-size: 12px; color: #888;">Zoom:</label>
-      <input type="range" id="zoomSlider" min="1" max="10" value="1" step="0.5">
-      <span id="zoomLevel" style="font-size: 12px; color: #888;">1x</span>
-    </div>
     <div id="timelineWrapper">
-      <div id="timelineBar" onmousemove="showTooltip(event)" onmouseleave="hideTooltip()" onclick="seekTimeline(event)">
-        <div id="segments"></div>
+      <div id="timelineBar">
         <div id="playhead">
           <div id="playheadTime">00:00:00</div>
         </div>
-        <div id="hoverTooltip"></div>
       </div>
     </div>
   </div>
 
-  <!-- Modal -->
-  <div class="modal" id="modal">
+  <div id="modal" class="modal">
     <div class="modal-content">
-      <h3 id="modalTitle">Notice</h3>
+      <h3>Notice</h3>
       <p id="modalMessage"></p>
       <button onclick="closeModal()">OK</button>
     </div>
   </div>
 
   <script>
-    // Elements
-    const video = document.getElementById('video');
-    const cameraSelect = document.getElementById('cameraSelect');
-    const datePicker = document.getElementById('datePicker');
-    const timePicker = document.getElementById('timePicker');
-    const playhead = document.getElementById('playhead');
-    const playheadTime = document.getElementById('playheadTime');
-    const segments = document.getElementById('segments');
-    const currentTime = document.getElementById('currentTime');
-    const videoInfo = document.getElementById('videoInfo');
-    const loading = document.getElementById('loading');
-    const playPauseBtn = document.getElementById('playPauseBtn');
-    const speedIndicator = document.getElementById('speedIndicator');
-    const hoverTooltip = document.getElementById('hoverTooltip');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const zoomSlider = document.getElementById('zoomSlider');
-    const zoomLevel = document.getElementById('zoomLevel');
-    const timelineBar = document.getElementById('timelineBar');
-    const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMessage = document.getElementById('modalMessage');
-    
-    // State
-    let videos = [];
-    let currentVideo = null;
-    let currentSpeed = 1.0;
-    const speeds = [0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0];
-    let refreshInterval = null;
-    let nextVideoPreload = null;
-    let zoomFactor = 1;
-    
-    // Initialize
-    (async function init() {
-      const today = new Date();
-      datePicker.valueAsDate = today;
-      timePicker.value = today.toTimeString().slice(0, 8);
-      
-      await loadCameras();
-      
-      // Auto-load on start
-      if (cameraSelect.value) {
-        await loadVideos();
-      }
-      
-      // Video events
-      video.addEventListener('timeupdate', updatePlayhead);
-      video.addEventListener('ended', playNextVideo);
-      video.addEventListener('play', () => playPauseBtn.textContent = '⏸');
-      video.addEventListener('pause', () => playPauseBtn.textContent = '▶');
-      video.addEventListener('loadstart', () => loading.classList.add('active'));
-      video.addEventListener('canplay', () => loading.classList.remove('active'));
-      
-      // Keyboard shortcuts
-      document.addEventListener('keydown', handleKeyPress);
-      
-      // Zoom slider
-      zoomSlider.addEventListener('input', (e) => {
-        zoomFactor = parseFloat(e.target.value);
-        zoomLevel.textContent = zoomFactor + 'x';
-        applyZoom();
-      });
-      
-      // Camera/date change listeners
-      cameraSelect.addEventListener('change', loadVideos);
-      datePicker.addEventListener('change', loadVideos);
-    })();
-    
-    // Load cameras
+    // ============================================================================
+    // STATE
+    // ============================================================================
+    const state = {
+      videos: [],
+      currentIndex: -1,
+      speedIndex: 2, // 1.0x
+      speeds: [0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0],
+      zoom: 1,
+      currentTime: 0,
+      wasPlaying: false,
+      refreshInterval: null
+    };
+
+    // ============================================================================
+    // DOM ELEMENTS
+    // ============================================================================
+    const dom = {
+      cameraSelect: document.getElementById('cameraSelect'),
+      datePicker: document.getElementById('datePicker'),
+      timePicker: document.getElementById('timePicker'),
+      currentVideo: document.getElementById('currentVideo'),
+      nextVideo: document.getElementById('nextVideo'),
+      playPauseBtn: document.getElementById('playPauseBtn'),
+      speedIndicator: document.getElementById('speedIndicator'),
+      downloadBtn: document.getElementById('downloadBtn'),
+      timelineBar: document.getElementById('timelineBar'),
+      timelineWrapper: document.getElementById('timelineWrapper'),
+      videoInfo: document.getElementById('videoInfo'),
+      playhead: document.getElementById('playhead'),
+      playheadTime: document.getElementById('playheadTime'),
+      loading: document.getElementById('loading'),
+      modal: document.getElementById('modal'),
+      modalMessage: document.getElementById('modalMessage')
+    };
+
+    // ============================================================================
+    // DATA LOADING
+    // ============================================================================
     async function loadCameras() {
       try {
         const res = await fetch('/api/cameras');
         const cameras = await res.json();
         
-        cameraSelect.innerHTML = '<option value="">Select camera...</option>';
-        cameras.forEach(cam => {
+        dom.cameraSelect.innerHTML = '<option value="">Select camera...</option>';
+        cameras.forEach(c => {
           const option = document.createElement('option');
-          option.value = cam.id;
-          option.textContent = cam.name;
-          cameraSelect.appendChild(option);
+          option.value = c.id;
+          option.textContent = c.name;
+          dom.cameraSelect.appendChild(option);
         });
         
-        if (cameras.length > 0) {
-          cameraSelect.value = cameras[0].id;
+        if (cameras.length === 1) {
+          dom.cameraSelect.value = cameras[0].id;
+          loadVideos();
         }
       } catch (error) {
         console.error('Error loading cameras:', error);
-        showModal('Error', 'Failed to load cameras');
+        showModal('Failed to load cameras');
       }
     }
-    
-    // Load videos
+
     async function loadVideos() {
-      const camera = cameraSelect.value;
-      const date = datePicker.value;
-      
-      if (!camera || !date) {
-        return;
-      }
-      
+      const camera = dom.cameraSelect.value;
+      const date = dom.datePicker.value;
+      if (!camera || !date) return;
+
       try {
-        loading.classList.add('active');
+        dom.loading.classList.add('active');
         
         const res = await fetch(`/api/videos/${camera}/${date}`);
         const newVideos = await res.json();
         
-        loading.classList.remove('active');
-        
+        dom.loading.classList.remove('active');
+
         if (newVideos.length === 0) {
-          showModal('No Videos', 'No videos available for this date. Please select another date or camera.');
-          videoInfo.style.display = 'none';
-          segments.innerHTML = '';
+          showModal('No videos available for this date/camera.');
+          // Don't clear if we had videos before - keep showing previous date
+          if (state.videos.length === 0) {
+            dom.timelineBar.innerHTML = '<div id="playhead"><div id="playheadTime">00:00:00</div></div>';
+          }
           return;
         }
-        
-        // Only update if videos changed
-        if (JSON.stringify(videos) !== JSON.stringify(newVideos)) {
-          videos = newVideos;
+
+        // Only update if changed
+        if (JSON.stringify(state.videos) !== JSON.stringify(newVideos)) {
+          state.videos = newVideos;
           renderTimeline();
           
-          if (!currentVideo && videos.length > 0) {
-            playVideo(videos[0]);
+          // Auto-play first video if nothing is playing
+          if (state.currentIndex === -1) {
+            state.wasPlaying = false;
+            dom.playPauseBtn.textContent = '▶';
+            playVideo(0, true);
           }
         }
         
-        // Start auto-refresh
         startAutoRefresh();
       } catch (error) {
         console.error('Error loading videos:', error);
-        loading.classList.remove('active');
-        showModal('Error', 'Failed to load videos');
+        dom.loading.classList.remove('active');
+        showModal('Failed to load videos');
       }
     }
-    
-    // Auto-refresh every 30 seconds
+
     function startAutoRefresh() {
-      if (refreshInterval) clearInterval(refreshInterval);
-      refreshInterval = setInterval(loadVideos, 30000);
+      if (state.refreshInterval) clearInterval(state.refreshInterval);
+      state.refreshInterval = setInterval(loadVideos, 30000); // 30 seconds
     }
-    
-    // Render timeline
-    function renderTimeline() {
-      segments.innerHTML = '';
+
+    // ============================================================================
+    // VIDEO PLAYBACK
+    // ============================================================================
+    function playVideo(index, shouldPlay = state.wasPlaying) {
+      if (index < 0 || index >= state.videos.length) return;
+
+      state.currentIndex = index;
+      state.wasPlaying = shouldPlay;
+      const v = state.videos[index];
+
+      // Clean current video - force memory release
+      dom.currentVideo.pause();
+      dom.currentVideo.removeAttribute('src');
+      dom.currentVideo.load();
       
-      videos.forEach((v, idx) => {
-        const date = new Date(v.timestamp);
-        const minuteOfDay = date.getHours() * 60 + date.getMinutes() + date.getSeconds() / 60;
-        const position = (minuteOfDay / 1440) * 100;
-        
-        const widthMinutes = v.duration / 60;
-        const width = (widthMinutes / 1440) * 100;
+      // Load new video
+      dom.currentVideo.src = v.url;
+      dom.currentVideo.playbackRate = state.speeds[state.speedIndex];
+      
+      if (shouldPlay) {
+        dom.currentVideo.play().catch(e => console.error('Play error:', e));
+        dom.playPauseBtn.textContent = '⏸';
+      } else {
+        dom.playPauseBtn.textContent = '▶';
+      }
+
+      // Update UI
+      dom.downloadBtn.disabled = false;
+      dom.videoInfo.innerHTML = `<span>📹 ${v.filename}</span><span>📊 ${(v.size / 1024 / 1024).toFixed(2)} MB</span>`;
+
+      // Preload next
+      preloadNext(index + 1);
+      
+      // Update playhead
+      updatePlayhead();
+    }
+
+    function preloadNext(index) {
+      if (index >= state.videos.length) return;
+      
+      // Clean previous preload to free memory
+      dom.nextVideo.pause();
+      dom.nextVideo.removeAttribute('src');
+      dom.nextVideo.load();
+      
+      // Preload next
+      dom.nextVideo.src = state.videos[index].url;
+      dom.nextVideo.load();
+    }
+
+    function swapToNextVideo() {
+      // Simply play the next video index
+      const nextIndex = state.currentIndex + 1;
+      if (nextIndex >= state.videos.length) {
+        dom.currentVideo.pause();
+        dom.playPauseBtn.textContent = '▶';
+        state.wasPlaying = false;
+        return;
+      }
+      
+      state.wasPlaying = true;
+      playVideo(nextIndex, true);
+    }
+
+    function togglePlayPause() {
+      if (dom.currentVideo.paused) {
+        dom.currentVideo.play().catch(e => console.error('Play error:', e));
+        dom.playPauseBtn.textContent = '⏸';
+        state.wasPlaying = true;
+      } else {
+        dom.currentVideo.pause();
+        dom.playPauseBtn.textContent = '▶';
+        state.wasPlaying = false;
+      }
+    }
+
+    function changeSpeed(dir) {
+      state.speedIndex = Math.max(0, Math.min(state.speeds.length - 1, state.speedIndex + dir));
+      dom.currentVideo.playbackRate = state.speeds[state.speedIndex];
+      dom.speedIndicator.textContent = `${state.speeds[state.speedIndex]}x`;
+    }
+
+    function downloadVideo() {
+      if (state.currentIndex < 0) return;
+      const v = state.videos[state.currentIndex];
+      window.location.href = `${v.url}?download=true`;
+    }
+
+    function jumpToTime() {
+      const time = dom.timePicker.value.split(':').map(Number);
+      const targetSeconds = time[0] * 3600 + time[1] * 60 + (time[2] || 0);
+      
+      let closestIndex = 0;
+      let minDiff = Infinity;
+      
+      state.videos.forEach((v, i) => {
+        const d = new Date(v.timestamp);
+        const videoSeconds = d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+        const diff = Math.abs(videoSeconds - targetSeconds);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestIndex = i;
+        }
+      });
+      
+      playVideo(closestIndex, state.wasPlaying);
+    }
+
+    // ============================================================================
+    // TIMELINE
+    // ============================================================================
+    function renderTimeline() {
+      // Clear and re-add playhead
+      dom.timelineBar.innerHTML = '<div id="playhead"><div id="playheadTime">00:00:00</div></div>';
+      
+      state.videos.forEach((v, i) => {
+        const d = new Date(v.timestamp);
+        const minuteOfDay = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+        const pos = (minuteOfDay / 1440) * 100 * state.zoom;
+        const width = Math.max((v.duration / 60 / 1440) * 100 * state.zoom, 0.2);
         
         const seg = document.createElement('div');
         seg.className = 'segment';
-        seg.style.left = position + '%';
-        seg.style.width = Math.max(width, 0.3) + '%';
+        seg.style.left = `${pos}%`;
+        seg.style.width = `${width}%`;
         seg.title = `${v.time} - ${v.filename}`;
         seg.onclick = (e) => {
           e.stopPropagation();
-          playVideo(v);
+          playVideo(i, state.wasPlaying);
         };
-        segments.appendChild(seg);
+        dom.timelineBar.appendChild(seg);
       });
-      
-      applyZoom();
-    }
-    
-    // Apply zoom to timeline
-    function applyZoom() {
-      const width = 100 * zoomFactor;
-      timelineBar.style.width = width + '%';
-      
-      // Scroll to playhead position
-      if (currentVideo) {
-        const date = new Date(currentVideo.timestamp);
-        const minuteOfDay = date.getHours() * 60 + date.getMinutes();
-        const percent = (minuteOfDay / 1440);
-        const scrollPos = (timelineBar.parentElement.scrollWidth * percent) - (timelineBar.parentElement.clientWidth / 2);
-        timelineBar.parentElement.scrollLeft = Math.max(0, scrollPos);
+
+      // Add time ticks every hour
+      for (let hour = 0; hour <= 24; hour++) {
+        const pos = (hour / 24) * 100 * state.zoom;
+        const tick = document.createElement('div');
+        tick.className = 'time-tick';
+        tick.style.left = `${pos}%`;
+        tick.textContent = `${hour.toString().padStart(2, '0')}:00`;
+        dom.timelineBar.appendChild(tick);
       }
+
+      dom.timelineBar.style.width = `${100 * state.zoom}%`;
+      
+      // Update references
+      dom.playhead = document.getElementById('playhead');
+      dom.playheadTime = document.getElementById('playheadTime');
     }
-    
-    // Play video
-    function playVideo(videoData) {
-      // Clean up old video to free memory
-      if (video.src) {
-        URL.revokeObjectURL(video.src);
-      }
-      
-      currentVideo = videoData;
-      video.src = videoData.url;
-      video.playbackRate = currentSpeed;
-      video.play();
-      
-      downloadBtn.disabled = false;
-      
-      videoInfo.style.display = 'block';
-      document.getElementById('infoFilename').textContent = videoData.filename;
-      document.getElementById('infoTimestamp').textContent = new Date(videoData.timestamp).toLocaleString('en-US');
-      document.getElementById('infoSize').textContent = formatBytes(videoData.size);
-      
-      updatePlayhead();
-      preloadNextVideo();
-    }
-    
-    // Preload next video
-    function preloadNextVideo() {
-      const idx = videos.indexOf(currentVideo);
-      if (idx < videos.length - 1) {
-        const nextVideo = videos[idx + 1];
-        if (nextVideoPreload) {
-          nextVideoPreload.src = '';
-        }
-        nextVideoPreload = document.createElement('video');
-        nextVideoPreload.src = nextVideo.url;
-        nextVideoPreload.preload = 'auto';
-      }
-    }
-    
-    // Play next video
-    function playNextVideo() {
-      if (!currentVideo) return;
-      
-      const idx = videos.indexOf(currentVideo);
-      if (idx < videos.length - 1) {
-        playVideo(videos[idx + 1]);
-      }
-    }
-    
-    // Seek timeline
-    function seekTimeline(event) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const percent = x / rect.width;
-      const minuteOfDay = percent * 1440 / zoomFactor;
-      
-      const targetTime = new Date(datePicker.value);
-      targetTime.setHours(Math.floor(minuteOfDay / 60));
-      targetTime.setMinutes(minuteOfDay % 60);
-      targetTime.setSeconds((minuteOfDay % 1) * 60);
-      
-      const closest = videos.reduce((prev, curr) => {
-        return Math.abs(curr.timestamp - targetTime.getTime()) < 
-               Math.abs(prev.timestamp - targetTime.getTime()) ? curr : prev;
-      });
-      
-      if (closest) playVideo(closest);
-    }
-    
-    // Update playhead
+
     function updatePlayhead() {
-      if (!currentVideo) return;
+      if (state.currentIndex < 0) return;
       
-      const date = new Date(currentVideo.timestamp);
-      const minuteOfDay = date.getHours() * 60 + date.getMinutes() + date.getSeconds() / 60;
-      const percent = (minuteOfDay / 1440) * 100 * zoomFactor;
+      const v = state.videos[state.currentIndex];
+      const d = new Date(v.timestamp);
+      const startMinute = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+      const currentMinute = startMinute + (state.currentTime / 60);
+      const pos = (currentMinute / 1440) * 100 * state.zoom;
       
-      playhead.style.left = percent + '%';
-      playheadTime.textContent = date.toTimeString().slice(0, 8);
-      currentTime.textContent = date.toLocaleTimeString('en-US');
-    }
-    
-    // Tooltip
-    function showTooltip(event) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const percent = x / rect.width;
-      const minuteOfDay = percent * 1440 / zoomFactor;
+      dom.playhead.style.left = `${pos}%`;
       
-      const hours = Math.floor(minuteOfDay / 60);
-      const minutes = Math.floor(minuteOfDay % 60);
-      const seconds = Math.floor((minuteOfDay % 1) * 60);
+      const currentD = new Date(v.timestamp);
+      currentD.setSeconds(currentD.getSeconds() + Math.floor(state.currentTime));
+      dom.playheadTime.textContent = currentD.toTimeString().slice(0, 8);
+
+      // Smart auto-scroll: keep playhead centered
+      const container = dom.timelineWrapper;
+      const barWidth = dom.timelineBar.offsetWidth;
+      const playheadPos = (pos / 100) * barWidth;
+      const centerPos = container.scrollLeft + container.clientWidth / 2;
       
-      const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      
-      hoverTooltip.textContent = timeStr;
-      hoverTooltip.style.display = 'block';
-      hoverTooltip.style.left = (event.clientX - rect.left) + 'px';
-      hoverTooltip.style.top = '10px';
-    }
-    
-    function hideTooltip() {
-      hoverTooltip.style.display = 'none';
-    }
-    
-    // Play/Pause
-    function togglePlayPause() {
-      if (video.paused) {
-        video.play();
-      } else {
-        video.pause();
+      // Only scroll if playhead is far from center
+      if (Math.abs(playheadPos - centerPos) > container.clientWidth / 4) {
+        const targetScroll = playheadPos - container.clientWidth / 2;
+        container.scrollTo({ left: Math.max(0, targetScroll), behavior: 'smooth' });
       }
     }
-    
-    // Change speed
-    function changeSpeed(direction) {
-      const currentIdx = speeds.indexOf(currentSpeed);
-      let newIdx = currentIdx + direction;
+
+    // ============================================================================
+    // TIMELINE INTERACTIONS
+    // ============================================================================
+    let isDragging = false;
+    let dragStartX, dragScrollLeft;
+    let hasDragged = false;
+
+    dom.timelineWrapper.addEventListener('mousedown', e => {
+      isDragging = true;
+      hasDragged = false;
+      dom.timelineWrapper.classList.add('grabbing');
+      dragStartX = e.pageX;
+      dragScrollLeft = dom.timelineWrapper.scrollLeft;
+    });
+
+    dom.timelineWrapper.addEventListener('mouseleave', () => {
+      isDragging = false;
+      dom.timelineWrapper.classList.remove('grabbing');
+    });
+
+    dom.timelineWrapper.addEventListener('mouseup', e => {
+      isDragging = false;
+      dom.timelineWrapper.classList.remove('grabbing');
       
-      if (newIdx < 0) newIdx = 0;
-      if (newIdx >= speeds.length) newIdx = speeds.length - 1;
+      // If no drag, treat as click to seek
+      if (!hasDragged && e.target === dom.timelineBar) {
+        const rect = dom.timelineBar.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const percent = x / rect.width;
+        const minuteOfDay = (percent / state.zoom) * 1440;
+        
+        let closestIndex = 0;
+        let minDiff = Infinity;
+        
+        state.videos.forEach((v, i) => {
+          const d = new Date(v.timestamp);
+          const videoMinute = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+          const diff = Math.abs(videoMinute - minuteOfDay);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestIndex = i;
+          }
+        });
+        
+        playVideo(closestIndex, state.wasPlaying);
+      }
+    });
+
+    dom.timelineWrapper.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      e.preventDefault();
       
-      currentSpeed = speeds[newIdx];
-      video.playbackRate = currentSpeed;
-      speedIndicator.textContent = currentSpeed + 'x';
-    }
-    
-    // Jump to time
-    function jumpToTime() {
-      const time = timePicker.value;
-      if (!time || videos.length === 0) return;
+      const dragDistance = e.pageX - dragStartX;
+      if (Math.abs(dragDistance) > 5) hasDragged = true;
       
-      const [hours, minutes, seconds] = time.split(':').map(Number);
-      const targetTime = new Date(datePicker.value);
-      targetTime.setHours(hours, minutes, seconds);
+      dom.timelineWrapper.scrollLeft = dragScrollLeft - dragDistance;
+    });
+
+    // Zoom with mouse wheel (no Ctrl needed)
+    dom.timelineWrapper.addEventListener('wheel', e => {
+      e.preventDefault();
       
-      const closest = videos.reduce((prev, curr) => {
-        return Math.abs(curr.timestamp - targetTime.getTime()) < 
-               Math.abs(prev.timestamp - targetTime.getTime()) ? curr : prev;
-      });
+      const oldZoom = state.zoom;
+      state.zoom = Math.max(1, Math.min(10, state.zoom + (e.deltaY < 0 ? 0.5 : -0.5)));
       
-      if (closest) playVideo(closest);
-    }
-    
-    // Download video
-    function downloadVideo() {
-      if (!currentVideo) return;
-      
-      const a = document.createElement('a');
-      a.href = currentVideo.url;
-      a.download = currentVideo.filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-    
-    // Modal
-    function showModal(title, message) {
-      modalTitle.textContent = title;
-      modalMessage.textContent = message;
-      modal.classList.add('active');
-    }
-    
-    function closeModal() {
-      modal.classList.remove('active');
-    }
-    
-    // Keyboard shortcuts
-    function handleKeyPress(e) {
+      if (oldZoom !== state.zoom) {
+        renderTimeline();
+        
+        // Maintain zoom center at cursor position
+        const rect = dom.timelineWrapper.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const scrollRatio = (dom.timelineWrapper.scrollLeft + mouseX) / dom.timelineWrapper.scrollWidth;
+        const newScroll = (dom.timelineWrapper.scrollWidth * scrollRatio) - mouseX;
+        dom.timelineWrapper.scrollLeft = Math.max(0, newScroll);
+      }
+    }, { passive: false });
+
+    // ============================================================================
+    // KEYBOARD SHORTCUTS
+    // ============================================================================
+    document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
       
       switch(e.key) {
@@ -768,10 +684,10 @@
           togglePlayPause();
           break;
         case 'ArrowLeft':
-          video.currentTime = Math.max(0, video.currentTime - 5);
+          dom.currentVideo.currentTime = Math.max(0, dom.currentVideo.currentTime - 5);
           break;
         case 'ArrowRight':
-          video.currentTime = Math.min(video.duration, video.currentTime + 5);
+          dom.currentVideo.currentTime = Math.min(dom.currentVideo.duration, dom.currentVideo.currentTime + 5);
           break;
         case 'ArrowUp':
           changeSpeed(1);
@@ -784,21 +700,74 @@
           downloadVideo();
           break;
       }
-    }
-    
-    // Helper functions
-    function formatBytes(bytes) {
-      if (bytes === 0) return '0 B';
-      const k = 1024;
-      const sizes = ['B', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    }
-    
-    // Close modal on click outside
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
     });
+
+    // ============================================================================
+    // UI HELPERS
+    // ============================================================================
+    function showModal(msg) {
+      dom.modalMessage.textContent = msg;
+      dom.modal.classList.add('active');
+    }
+
+    function closeModal() {
+      dom.modal.classList.remove('active');
+    }
+
+    // ============================================================================
+    // VIDEO EVENTS
+    // ============================================================================
+    dom.currentVideo.addEventListener('ended', swapToNextVideo);
+    dom.currentVideo.addEventListener('timeupdate', () => {
+      state.currentTime = dom.currentVideo.currentTime;
+      updatePlayhead();
+    });
+    dom.currentVideo.addEventListener('loadstart', () => dom.loading.classList.add('active'));
+    dom.currentVideo.addEventListener('canplay', () => dom.loading.classList.remove('active'));
+    dom.currentVideo.addEventListener('play', () => {
+      dom.playPauseBtn.textContent = '⏸';
+      state.wasPlaying = true;
+    });
+    dom.currentVideo.addEventListener('pause', () => {
+      dom.playPauseBtn.textContent = '▶';
+      state.wasPlaying = false;
+    });
+
+    // ============================================================================
+    // INITIALIZATION
+    // ============================================================================
+    (async () => {
+      const today = new Date();
+      dom.datePicker.value = today.toISOString().split('T')[0];
+      dom.timePicker.value = today.toTimeString().slice(0, 8);
+      
+      await loadCameras();
+      
+      dom.cameraSelect.addEventListener('change', () => {
+        state.currentIndex = -1;
+        state.wasPlaying = false;
+        dom.currentVideo.pause();
+        dom.currentVideo.removeAttribute('src');
+        dom.currentVideo.load();
+        dom.playPauseBtn.textContent = '▶';
+        loadVideos();
+      });
+      
+      dom.datePicker.addEventListener('change', () => {
+        state.currentIndex = -1;
+        state.wasPlaying = false;
+        dom.currentVideo.pause();
+        dom.currentVideo.removeAttribute('src');
+        dom.currentVideo.load();
+        dom.playPauseBtn.textContent = '▶';
+        loadVideos();
+      });
+      
+      // Close modal on outside click
+      dom.modal.addEventListener('click', e => {
+        if (e.target === dom.modal) closeModal();
+      });
+    })();
   </script>
 </body>
 </html>
