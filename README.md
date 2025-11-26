@@ -2,6 +2,8 @@
 
 A lightweight, web-based NVR (Network Video Recorder) interface for browsing and playing back camera recordings. Built with Node.js and vanilla JavaScript, designed to run in Docker with minimal resource usage.
 
+<img width="1919" height="918" alt="image" src="https://github.com/user-attachments/assets/dd34dd7b-6163-4cc4-87d2-004c9c4e3c76" />
+
 ## Features
 
 - Timeline-based video playback with 24-hour view
